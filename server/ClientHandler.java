@@ -21,6 +21,13 @@ public class ClientHandler implements Runnable {
             OutputStream out = clientSocket.getOutputStream()
         ) {
 
+            // Perform the handshake with the client
+            if (!Authenticator.performHandshake(in, out)) {
+                System.out.println("Handshake failed. Closing connection.");
+                clientSocket.close();
+                return;
+            }
+
             // Read the request line, the first line of which contains the HTTP method and path
             String requestLine = in.readLine();
             if (requestLine == null || requestLine.isEmpty()) return;
@@ -67,7 +74,7 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-    
+
     /**
      * Sends an HTTP response to the client.
      *
